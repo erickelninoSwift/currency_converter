@@ -14,21 +14,24 @@ function App() {
 
     if (firstCurrenty && secondCurrenty && Amount) {
       setIsLoading(true);
-      const fetchData = async () => {
-        const response = await fetch(
-          `https://api.frankfurter.app/latest?amount=${Number(
-            Amount
-          )}&from=${firstCurrenty}&to=${secondCurrenty}`,
-          { signal: controller.signal }
-        );
-        const data = await response.json();
-        setConveretd(data.rates[secondCurrenty]);
+      try {
+        const fetchData = async () => {
+          const response = await fetch(
+            `https://api.frankfurter.app/latest?amount=${Number(
+              Amount
+            )}&from=${firstCurrenty}&to=${secondCurrenty}`,
+            { signal: controller.signal }
+          );
+          const data = await response.json();
+          setConveretd(data.rates[secondCurrenty]);
 
-        setIsLoading(false);
-      };
+          setIsLoading(false);
+        };
 
-      fetchData();
-
+        fetchData();
+      } catch (error) {
+        console.error(error.message);
+      }
       return function () {
         controller.abort();
       };
@@ -43,14 +46,21 @@ function App() {
           type="text"
           value={Amount}
           onChange={(e) => setAmount(e.target.value)}
+          disabled={isLoading}
         />
-        <select onChange={(e) => setFirstCurrency(e.target.value)}>
+        <select
+          onChange={(e) => setFirstCurrency(e.target.value)}
+          disabled={isLoading}
+        >
           <option value="USD">USD</option>
           <option value="EUR">EUR</option>
           <option value="CAD">CAD</option>
           <option value="INR">INR</option>
         </select>
-        <select onChange={(e) => setSecondCurrency(e.target.value)}>
+        <select
+          onChange={(e) => setSecondCurrency(e.target.value)}
+          disabled={isLoading}
+        >
           <option value="USD">USD</option>
           <option value="EUR">EUR</option>
           <option value="CAD">CAD</option>
