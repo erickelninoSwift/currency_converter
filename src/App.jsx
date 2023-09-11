@@ -7,11 +7,13 @@ function App() {
   const [firstCurrenty, setFirstCurrency] = useState("");
   const [secondCurrenty, setSecondCurrency] = useState("USD");
   const [Amount, setAmount] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     const controller = new AbortController();
 
     if (firstCurrenty && secondCurrenty && Amount) {
+      setIsLoading(true);
       const fetchData = async () => {
         const response = await fetch(
           `https://api.frankfurter.app/latest?amount=${Number(
@@ -21,6 +23,8 @@ function App() {
         );
         const data = await response.json();
         setConveretd(data.rates[secondCurrenty]);
+
+        setIsLoading(false);
       };
 
       fetchData();
@@ -34,6 +38,7 @@ function App() {
   return (
     <>
       <div>
+        {isLoading && <div>Loading...</div>}
         <input
           type="text"
           value={Amount}
